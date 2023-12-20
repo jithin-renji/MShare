@@ -1,0 +1,13 @@
+MShare
+
+# CMake stuff
+.cache/
+CMakeFiles/
+cmake_install.cmake
+CMakeCache.txt
+compile_commands.json
+Makefile
+
+# Not making any changes to Crypto++
+# so no need to include with our sources.
+cryptopp/
