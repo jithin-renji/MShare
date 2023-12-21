@@ -1,5 +1,5 @@
 # MShare
-MShare is a secure peer-to-peer messenger for macOS and Linux.
+MShare is a secure (work in progress) peer-to-peer messenger for macOS and Linux.
 
 ## Build Instructions
 You need the following to build and run MShare:
