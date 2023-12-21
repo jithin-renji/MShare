@@ -9,8 +9,7 @@
 #include <iostream>
 #include <filesystem>
 
-namespace MShare
-{
+namespace MShare {
 
 CryptoContext::CryptoContext(): msdir_(".mshare") {
   namespace fs = std::filesystem;
