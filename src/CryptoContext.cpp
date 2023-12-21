@@ -30,8 +30,8 @@ CryptoContext::CryptoContext(): msdir_(".mshare") {
   CryptoPP::ECIES<CryptoPP::ECP> d0;
 
   if (use_new_keys) {
-    d_ = std::make_unique<Decyptor>(prng_, CryptoPP::ASN1::secp256r1());
-    e_ = std::make_unique<Encryptor>(*d_);
+    decryptor_ = std::make_unique<Decyptor>(prng_, CryptoPP::ASN1::secp256r1());
+    encryptor_ = std::make_unique<Encryptor>(*decryptor_);
     save_keys();
     status() << "Done.\n";
   } else {
@@ -46,7 +46,7 @@ std::string CryptoContext::encrypt(std::string input) {
     true,
     new CryptoPP::PK_EncryptorFilter(
       prng_,
-      *e_,
+      *encryptor_,
       new CryptoPP::StringSink(ciphertext)
     )
   );
@@ -61,7 +61,7 @@ std::string CryptoContext::decrypt(std::string input) {
     true,
     new CryptoPP::PK_DecryptorFilter(
       prng_,
-      *d_,
+      *decryptor_,
       new CryptoPP::StringSink(plaintext)
     )
   );
@@ -71,20 +71,20 @@ std::string CryptoContext::decrypt(std::string input) {
 
 void CryptoContext::save_keys() {
   CryptoPP::FileSink pubkey_sink((msdir_ / "pubkey").c_str());
-  e_->GetPublicKey().Save(pubkey_sink);
+  encryptor_->GetPublicKey().Save(pubkey_sink);
 
   CryptoPP::FileSink privkey_sink((msdir_ / "privkey").c_str());
-  d_->GetPrivateKey().Save(privkey_sink);
+  decryptor_->GetPrivateKey().Save(privkey_sink);
 }
 
 void CryptoContext::load_keys() {
   CryptoPP::FileSource pubkey_source((msdir_ / "pubkey").c_str(), true);
-  e_ = std::make_unique<Encryptor>();
-  e_->AccessPublicKey().Load(pubkey_source);
+  encryptor_ = std::make_unique<Encryptor>();
+  encryptor_->AccessPublicKey().Load(pubkey_source);
 
   CryptoPP::FileSource privkey_source((msdir_ / "privkey").c_str(), true);
-  d_ = std::make_unique<Decyptor>();
-  d_->AccessPrivateKey().Load(privkey_source);
+  decryptor_ = std::make_unique<Decyptor>();
+  decryptor_->AccessPrivateKey().Load(privkey_source);
 }
 
 

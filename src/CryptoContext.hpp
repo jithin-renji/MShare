@@ -30,8 +30,8 @@ private:
   fs::path msdir_;
 
   CryptoPP::AutoSeededRandomPool prng_;
-  std::unique_ptr<Decyptor> d_;
-  std::unique_ptr<Encryptor> e_;
+  std::unique_ptr<Decyptor> decryptor_;
+  std::unique_ptr<Encryptor> encryptor_;
 
   void save_keys();
   void load_keys();
