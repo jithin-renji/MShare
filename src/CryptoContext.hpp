@@ -8,7 +8,6 @@
 #include <streambuf>
 #include <string_view>
 #include <filesystem>
-#include <memory>
 
 namespace MShare
 {
@@ -30,14 +29,14 @@ private:
   fs::path msdir_;
 
   CryptoPP::AutoSeededRandomPool prng_;
-  std::unique_ptr<Decyptor> decryptor_;
-  std::unique_ptr<Encryptor> encryptor_;
+  Decyptor decryptor_;
+  Encryptor encryptor_;
 
   void save_keys();
   void load_keys();
-};
 
-std::ostream &operator<<(std::ostream &os, CryptoContext &cc);
+  friend std::ostream& operator<<(std::ostream& os, CryptoContext& cc);
+};
 
 } // namespace MShare
 

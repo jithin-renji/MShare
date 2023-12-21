@@ -8,7 +8,6 @@
 
 #include <iostream>
 #include <filesystem>
-#include <memory>
 
 namespace MShare
 {
@@ -21,22 +20,25 @@ CryptoContext::CryptoContext(): msdir_(".mshare") {
     warn() << "Creating directory " << msdir_ << '\n';
   }
 
-  bool use_new_keys = false;
+  bool generate_new_keys = false;
   if (!fs::exists(msdir_ / "pubkey") || !fs::exists(msdir_ / "privkey")) {
     warn() << "No keys in " << msdir_ << ". Generating...\n";
-    use_new_keys = true;
+    generate_new_keys = true;
+  } else {
+    status() << "Loading keys...\n";
   }
 
   CryptoPP::ECIES<CryptoPP::ECP> d0;
 
-  if (use_new_keys) {
-    decryptor_ = std::make_unique<Decyptor>(prng_, CryptoPP::ASN1::secp256r1());
-    encryptor_ = std::make_unique<Encryptor>(*decryptor_);
+  if (generate_new_keys) {
+    decryptor_ = Decyptor(prng_, CryptoPP::ASN1::secp256r1());
+    encryptor_ = Encryptor(decryptor_);
     save_keys();
-    status() << "Done.\n";
   } else {
     load_keys();
   }
+
+  status() << "Done.\n";
 }
 
 std::string CryptoContext::encrypt(std::string input) {
@@ -46,7 +48,7 @@ std::string CryptoContext::encrypt(std::string input) {
     true,
     new CryptoPP::PK_EncryptorFilter(
       prng_,
-      *encryptor_,
+      encryptor_,
       new CryptoPP::StringSink(ciphertext)
     )
   );
@@ -61,7 +63,7 @@ std::string CryptoContext::decrypt(std::string input) {
     true,
     new CryptoPP::PK_DecryptorFilter(
       prng_,
-      *decryptor_,
+      decryptor_,
       new CryptoPP::StringSink(plaintext)
     )
   );
@@ -71,20 +73,81 @@ std::string CryptoContext::decrypt(std::string input) {
 
 void CryptoContext::save_keys() {
   CryptoPP::FileSink pubkey_sink((msdir_ / "pubkey").c_str());
-  encryptor_->GetPublicKey().Save(pubkey_sink);
+  encryptor_.GetPublicKey().Save(pubkey_sink);
 
   CryptoPP::FileSink privkey_sink((msdir_ / "privkey").c_str());
-  decryptor_->GetPrivateKey().Save(privkey_sink);
+  decryptor_.GetPrivateKey().Save(privkey_sink);
 }
 
 void CryptoContext::load_keys() {
   CryptoPP::FileSource pubkey_source((msdir_ / "pubkey").c_str(), true);
-  encryptor_ = std::make_unique<Encryptor>();
-  encryptor_->AccessPublicKey().Load(pubkey_source);
+  encryptor_.AccessPublicKey().Load(pubkey_source);
 
   CryptoPP::FileSource privkey_source((msdir_ / "privkey").c_str(), true);
-  decryptor_ = std::make_unique<Decyptor>();
-  decryptor_->AccessPrivateKey().Load(privkey_source);
+  decryptor_.AccessPrivateKey().Load(privkey_source);
+}
+
+// Taken from https://www.cryptopp.com/wiki/Elliptic_Curve_Integrated_Encryption_Scheme
+namespace {
+
+void print_privkey(const CryptoPP::DL_PrivateKey_EC<CryptoPP::ECP>& key, std::ostream& out = std::cout) {
+  // Group parameters
+  const CryptoPP::DL_GroupParameters_EC<CryptoPP::ECP>& params = key.GetGroupParameters();
+  // Base precomputation (for public key calculation from private key)
+  const CryptoPP::DL_FixedBasePrecomputation<CryptoPP::ECPPoint>& bpc = params.GetBasePrecomputation();
+  // Public Key (just do the exponentiation)
+  const CryptoPP::ECPPoint point = bpc.Exponentiate(params.GetGroupPrecomputation(), key.GetPrivateExponent());
+
+  out << "Modulus: " << std::hex << params.GetCurve().GetField().GetModulus() << '\n';
+  out << "Cofactor: " << std::hex << params.GetCofactor() << '\n';
+
+  out << "Coefficients" << '\n';
+  out << "  A: " << std::hex << params.GetCurve().GetA() << '\n';
+  out << "  B: " << std::hex << params.GetCurve().GetB() << '\n';
+
+  out << "Base Point" << '\n';
+  out << "  x: " << std::hex << params.GetSubgroupGenerator().x << '\n';
+  out << "  y: " << std::hex << params.GetSubgroupGenerator().y << '\n';
+
+  out << "Public Point" << '\n';
+  out << "  x: " << std::hex << point.x << '\n';
+  out << "  y: " << std::hex << point.y << '\n';
+
+  out << "Private Exponent (multiplicand): " << '\n';
+  out << "  " << std::hex << key.GetPrivateExponent() << '\n';
+}
+
+void print_pubkey(const CryptoPP::DL_PublicKey_EC<CryptoPP::ECP>& key, std::ostream& out) {
+  // Group parameters
+  const CryptoPP::DL_GroupParameters_EC<CryptoPP::ECP>& params = key.GetGroupParameters();
+  // Public key
+  const CryptoPP::ECPPoint& point = key.GetPublicElement();
+
+  out << "Modulus: " << std::hex << params.GetCurve().GetField().GetModulus() << '\n';
+  out << "Cofactor: " << std::hex << params.GetCofactor() << '\n';
+
+  out << "Coefficients" << '\n';
+  out << "  A: " << std::hex << params.GetCurve().GetA() << '\n';
+  out << "  B: " << std::hex << params.GetCurve().GetB() << '\n';
+
+  out << "Base Point" << '\n';
+  out << "  x: " << std::hex << params.GetSubgroupGenerator().x << '\n';
+  out << "  y: " << std::hex << params.GetSubgroupGenerator().y << '\n';
+
+  out << "Public Point" << '\n';
+  out << "  x: " << std::hex << point.x << '\n';
+  out << "  y: " << std::hex << point.y << '\n';
+}
+
+} // namespace
+
+std::ostream& operator<<(std::ostream& os, CryptoContext& cc) {
+  os << "-----PRIVATE KEY-----\n";
+  print_privkey(cc.decryptor_.GetKey(), os);
+  os << "\n-----PUBLIC KEY-----\n";
+  print_pubkey(cc.encryptor_.GetKey(), os);
+
+  return os;
 }
 
 

@@ -21,6 +21,7 @@ int main() {
     )
   );
 
+  std::cout << cc << '\n';
   std::cout << "E: " << ec << '\n';
   std::cout << "D: " << cc.decrypt(ciphertext) << '\n';
 
