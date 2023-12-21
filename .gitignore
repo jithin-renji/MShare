@@ -11,3 +11,4 @@ Makefile
 # Not making any changes to Crypto++
 # so no need to include with our sources.
 cryptopp/
+*.zip
