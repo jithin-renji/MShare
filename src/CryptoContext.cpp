@@ -81,9 +81,11 @@ void CryptoContext::save_keys() {
 void CryptoContext::load_keys() {
   CryptoPP::FileSource pubkey_source((msdir_ / "pubkey").c_str(), true);
   encryptor_.AccessPublicKey().Load(pubkey_source);
+  encryptor_.GetPublicKey().ThrowIfInvalid(prng_, 3);
 
   CryptoPP::FileSource privkey_source((msdir_ / "privkey").c_str(), true);
   decryptor_.AccessPrivateKey().Load(privkey_source);
+  decryptor_.GetPrivateKey().ThrowIfInvalid(prng_, 3);
 }
 
 // Taken from https://www.cryptopp.com/wiki/Elliptic_Curve_Integrated_Encryption_Scheme
