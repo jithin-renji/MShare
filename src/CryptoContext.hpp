@@ -14,8 +14,7 @@ namespace MShare
 
 namespace fs = std::filesystem;
 
-class CryptoContext
-{
+class CryptoContext {
 public:
   CryptoContext();
 
