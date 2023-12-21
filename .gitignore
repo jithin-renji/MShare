@@ -1,4 +1,5 @@
 MShare
+.mshare/
 
 # CMake stuff
 .cache/

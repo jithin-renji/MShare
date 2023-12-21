@@ -8,9 +8,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_executable(
     MShare
     src/main.cpp
+    src/Logger.cpp
     src/CryptoContext.cpp
 
     src/CryptoContext.hpp
+    src/Logger.hpp
 )
 
 target_include_directories(
