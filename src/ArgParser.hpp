@@ -4,13 +4,30 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <any>
 #include <unordered_map>
 #include <stdexcept>
 
 namespace MShare {
 
-struct UnknownOptionError : public std::exception {
+class UnknownOptionError : public std::exception {
+public:
+  UnknownOptionError(std::string option);
   const char* what() const noexcept override;
+
+private:
+  std::string option_;
+  std::string what_str_;
+};
+
+class NoValueForOptionError : public std::exception {
+public:
+  NoValueForOptionError(std::string option);
+  const char* what() const noexcept override;
+
+private:
+  std::string option_;
+  std::string what_str_;
 };
 
 struct Option {
@@ -33,20 +50,20 @@ struct Option {
 };
 
 using OptionList = std::vector<Option>;
-using ParsedOptions = std::unordered_map<std::string, std::string>;
+using ParsedOptions = std::unordered_map<std::string, std::any>;
 
 class ArgParser {
 public:
   ArgParser(int argc, char *argv[], const OptionList& options);
 
-  const ParsedOptions get();
+  ParsedOptions get();
   void print_help(std::ostream& os = std::cout);
 
 private:
   std::string progname_;
   OptionList options_;
   std::vector<std::string> original_args_;
-  std::unordered_map<std::string, std::string> parsed_options_;
+  ParsedOptions parsed_options_;
 
   void parse();
 };

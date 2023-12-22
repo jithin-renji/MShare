@@ -23,9 +23,11 @@ int main(int argc, char *argv[]) {
       "Show version information and exit."}
   };
 
+  MShare::ParsedOptions parsed_options;
+
   try {
     MShare::ArgParser parser(argc, argv, options);
-    const MShare::ParsedOptions parsed_options = parser.get();
+    parsed_options = parser.get();
     if (parsed_options.contains("help")) {
       parser.print_help();
       return 0;
