@@ -6,29 +6,45 @@ set(CMAKE_CXX_STANDARD_REQUIED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(
-    MShare
-    src/main.cpp
+    mshared
+    src/mshared/main.cpp
     src/Logger.cpp
     src/CryptoContext.cpp
+    src/MessageServer.cpp
 
-    src/CryptoContext.hpp
     src/Logger.hpp
+    src/CryptoContext.hpp
+    src/MessageServer.hpp
+)
+
+add_executable(
+    mshare-cli
+    src/mshare-cli/main.cpp
+    src/ArgParser.cpp
+
+    src/ArgParser.hpp
 )
 
 target_include_directories(
-    MShare
+    mshared
     PRIVATE
         src/
         ./
 )
 
+target_include_directories(
+    mshare-cli
+    PRIVATE
+        src/
+)
+
 target_link_directories(
-    MShare
+    mshared
     PRIVATE
         cryptopp/
 )
 
 target_link_libraries(
-    MShare
+    mshared
     cryptopp
 )

@@ -1,5 +1,8 @@
-MShare
+mshare-cli
+mshared
 .mshare/
+
+.DS_Store
 
 # CMake stuff
 .cache/

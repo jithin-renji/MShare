@@ -1,4 +1,5 @@
 #include <CryptoContext.hpp>
+#include <MessageServer.hpp>
 
 #include <cryptopp/hex.h>
 #include <cryptopp/filters.h>
@@ -21,9 +22,12 @@ int main() {
     )
   );
 
-  std::cout << cc << '\n';
   std::cout << "E: " << ec << '\n';
   std::cout << "D: " << cc.decrypt(ciphertext) << '\n';
+
+  MShare::MessageServer s(cc);
+  std::thread t = s.spawn();
+  t.join();
 
   return 0;
 }
