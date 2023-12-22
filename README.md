@@ -46,4 +46,4 @@ $ ./mshare-cli
 ## License
 MShare is free software licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
 
-Copyright (C) 2023 Jithin Renji
+Copyright (C) 2023 Jithin Renji.
