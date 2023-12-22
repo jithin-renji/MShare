@@ -54,9 +54,9 @@ int main(int argc, char *argv[]) {
   std::cout << "E: " << ec << '\n';
   std::cout << "D: " << cc.decrypt(ciphertext) << '\n';
 
-  MShare::MessageServer s(cc);
-  std::thread t = s.spawn();
-  t.join();
+  MShare::MessageServer server(cc);
+  std::thread server_thread = server.spawn();
+  server_thread.join();
 
   return 0;
 }
