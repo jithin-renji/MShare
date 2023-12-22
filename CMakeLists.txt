@@ -8,10 +8,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_executable(
     mshared
     src/mshared/main.cpp
+    src/ArgParser.cpp
     src/Logger.cpp
     src/CryptoContext.cpp
     src/MessageServer.cpp
 
+    src/ArgParser.hpp
     src/Logger.hpp
     src/CryptoContext.hpp
     src/MessageServer.hpp
