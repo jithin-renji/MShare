@@ -32,13 +32,18 @@ Run `cmake` to generate build files for your platform.
 $ cmake .
 ```
 
-To build and run on Linux/macOS:
+To build and run the daemon on Linux/macOS:
 ```
 $ make      # -j8
-$ ./MShare
+$ ./mshared
+```
+
+To run the command-line interface:
+```
+$ ./mshare-cli
 ```
 
 ## License
-MShare is licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
+MShare is free software licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
 
 Copyright (C) 2023 Jithin Renji
