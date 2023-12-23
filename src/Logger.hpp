@@ -5,8 +5,9 @@
 
 namespace MShare {
 
-std::ostream &warn(std::ostream &os = std::cerr);
 std::ostream &status(std::ostream &os = std::cerr);
+std::ostream &warn(std::ostream &os = std::cerr);
+std::ostream& error(std::ostream& os = std::cerr);
 
 }
 
