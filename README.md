@@ -32,16 +32,13 @@ Run `cmake` to generate build files for your platform.
 $ cmake .
 ```
 
-To build and run the daemon on Linux/macOS:
+To build Linux/macOS:
 ```
 $ make      # -j8
-$ ./mshared
 ```
 
-To run the command-line interface:
-```
-$ ./mshare-cli
-```
+The above command will build two executables `mshared` and `mshare-cli`. `mshared` is the MShare daemon and `mshare-cli`
+is the command-line front end for MShare. See `./mshared --help` and `./mshare-cli --help` for more information.
 
 ## License
 MShare is free software licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
