@@ -22,10 +22,12 @@ add_executable(
 add_executable(
     mshare-cli
     src/mshare-cli/main.cpp
+    src/mshare-cli/MessageClient.cpp
     src/ArgParser.cpp
     src/Logger.cpp
     src/Crypto.cpp
 
+    src/mshare-cli/MessageClient.hpp
     src/ArgParser.hpp
     src/Logger.hpp
     src/Crypto.hpp

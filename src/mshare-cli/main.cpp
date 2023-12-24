@@ -1,5 +1,7 @@
 #include <ArgParser.hpp>
 #include <Logger.hpp>
+#include <MessageClient.hpp>
+#include <Crypto.hpp>
 
 #include <any>
 #include <iostream>
@@ -16,8 +18,12 @@ void version() {
 }
 
 int mshare_cli_main(const MShare::ParsedOptions& options) {
+  MShare::CryptoContext cc;
   if (options.contains("message")) {
-    status() << "Sending message \"" << std::any_cast<std::string>(options.at("message")) << "\"\n";
+    status() << "Trying to send: \"" << std::any_cast<std::string>(options.at("message")) << "\"\n";
+
+    MShare::MessageClient client(cc);
+    status() << "Client is alive.\n";
   }
 
   return 0;
