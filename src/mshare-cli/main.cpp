@@ -48,7 +48,6 @@ int main(int argc, char *argv[]) {
   }
 
   for (MShare::Option& option : options) {
-    // std::cout << "Checking option: " << option.name << '\n';
     if (option.expected_val_type == MShare::Option::NONE)
       continue;
 

@@ -11,12 +11,12 @@ add_executable(
     src/ArgParser.cpp
     src/Logger.cpp
     src/Crypto.cpp
-    src/MessageServer.cpp
+    src/mshared/MessageServer.cpp
 
     src/ArgParser.hpp
     src/Logger.hpp
     src/Crypto.hpp
-    src/MessageServer.hpp
+    src/mshared/MessageServer.hpp
 )
 
 add_executable(
@@ -30,14 +30,17 @@ add_executable(
 target_include_directories(
     mshared
     PRIVATE
-        src/
         ./
+        src/
+        src/mshared/
 )
 
 target_include_directories(
     mshare-cli
     PRIVATE
+        ./
         src/
+        src/mshare-cli/
 )
 
 target_link_directories(

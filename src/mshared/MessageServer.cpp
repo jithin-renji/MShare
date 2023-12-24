@@ -58,7 +58,7 @@ void MessageServer::main_loop() {
   size_t nrecv = 0;
   while ((nrecv = recvfrom(sfd_, &buf[0], BUFLEN, 0, (struct sockaddr*) &client, &caddr_sz)) > 0) {
     sbuf.append(buf.cbegin(), buf.cend());
-    status() << "New message: " << sbuf;
+    status() << "New message from " << inet_ntoa(client.sin_addr) << ": " << sbuf;
     for (char& c : buf) {
       c = 0;
     }
