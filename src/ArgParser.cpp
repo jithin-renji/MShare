@@ -2,6 +2,7 @@
 
 #include <iomanip>
 #include <algorithm>
+#include <string>
 
 namespace MShare {
 
@@ -41,12 +42,30 @@ void ArgParser::print_help(std::ostream& os) {
     return o1.name.length() < o2.name.length();
   });
 
-  int col_width = longest_option->name.length() + 4;
+  int col_width = longest_option->name.length() + (longest_option->expected_val_type != Option::NONE ? 7 : 0) + 4;
 
   os << "Usage: " << progname_ << " [options]\n";
   os  << "Options:\n";
   for (Option& option : options_) {
-    os << "  --" << std::setw(col_width) << std::left << option.name << option.help << '\n';
+    std::string exp_val_str;
+    switch (option.expected_val_type) {
+    case Option::STRING:
+      exp_val_str = " STRING";
+      break;
+
+    case Option::INT:
+      exp_val_str = " INTEGER";
+      break;
+
+    case Option::FLOAT:
+      exp_val_str = " FLOAT";
+      break;
+
+    default:  // Option::NONE
+      break;
+    }
+
+    os << "  --" << std::setw(col_width) << std::left << (option.name + exp_val_str) << option.help << '\n';
   }
 }
 
