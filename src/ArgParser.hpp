@@ -1,6 +1,7 @@
 #ifndef MSARG_PARSER_HPP
 #define MSARG_PARSER_HPP
 
+#include <exception>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -27,6 +28,16 @@ public:
 
 private:
   std::string option_;
+  std::string what_str_;
+};
+
+class UnexpectedArgumentError : public std::exception {
+public:
+  UnexpectedArgumentError(std::string arg);
+  const char* what() const noexcept override;
+
+private:
+  std::string arg_;
   std::string what_str_;
 };
 

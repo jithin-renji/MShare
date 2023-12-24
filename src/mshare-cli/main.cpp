@@ -1,14 +1,26 @@
 #include <ArgParser.hpp>
+#include <Logger.hpp>
 
+#include <any>
 #include <iostream>
 #include <iomanip>
 #include <string>
 #include <vector>
 
+using MShare::status;
+
 void version() {
   std::cout << "mshare-cli v0.1\n"
             << "Copyright (C) 2023 Jithin Renji.\n"
             << "Free software licensed under the GNU GPLv3.\n";
+}
+
+int mshare_cli_main(const MShare::ParsedOptions& options) {
+  if (options.contains("message")) {
+    status() << "Sending message \"" << std::any_cast<std::string>(options.at("message")) << "\"\n";
+  }
+
+  return 0;
 }
 
 int main(int argc, char *argv[]) {
@@ -40,22 +52,15 @@ int main(int argc, char *argv[]) {
       version();
     }
   } catch (MShare::UnknownOptionError& e) {
-    std::cout << e.what() << '\n';
+    std::cerr << e.what() << '\n';
     return -1;
   } catch (MShare::NoValueForOptionError& e) {
-    std::cout << e.what() << '\n';
+    std::cerr << e.what() << '\n';
+    return -1;
+  } catch (MShare::UnexpectedArgumentError& e) {
+    std::cerr << e.what() << '\n';
     return -1;
   }
 
-  for (MShare::Option& option : options) {
-    if (option.expected_val_type == MShare::Option::NONE)
-      continue;
-
-    if (parsed_options.contains(option.name)) {
-      if (option.expected_val_type == MShare::Option::STRING)
-        std::cout << std::setw(20) << std::left << option.name << std::any_cast<std::string>(parsed_options.at(option.name)) << '\n';
-    }
-  }
-
-  return 0;
+  return mshare_cli_main(parsed_options);
 }

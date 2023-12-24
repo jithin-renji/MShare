@@ -24,9 +24,18 @@ const char* NoValueForOptionError::what() const noexcept {
   return what_str_.c_str();
 }
 
+UnexpectedArgumentError::UnexpectedArgumentError(std::string arg): arg_(arg) {
+  what_str_ = "Unexpected argument encountered during command-line parsing: ";
+  what_str_ += arg_;
+}
+
+const char* UnexpectedArgumentError::what() const noexcept {
+  return what_str_.c_str();
+}
+
 ArgParser::ArgParser(int argc, char *argv[], const OptionList& options): progname_(argv[0]), options_(options) {
-  // For convenience.
-  for (int i = 0; i < argc; i++) {
+  // For convenience. Ignoring argv[0] because we already have it in progname_.
+  for (int i = 1; i < argc; i++) {
     original_args_.push_back(argv[i]);
   }
 
@@ -70,10 +79,10 @@ void ArgParser::print_help(std::ostream& os) {
 }
 
 void ArgParser::parse() {
-  // TODO: handle non-flag args.
   bool expecting_arg = false;
   std::string cur_opt_name;
   for (std::string& arg : original_args_) {
+
     if (arg.length() > 2 && arg.substr(0, 2) == "--" && expecting_arg) {
       throw NoValueForOptionError(arg);
     } else if (arg.length() > 2 && arg.substr(0, 2) == "--" && !expecting_arg) {
@@ -93,9 +102,12 @@ void ArgParser::parse() {
       }
     } else if (expecting_arg) {
       // Only handles strings for now.
+      // TODO: Handle non-string types.
       parsed_options_[cur_opt_name] = arg;
       cur_opt_name.clear();
       expecting_arg = false;
+    } else {
+      throw UnexpectedArgumentError(arg);
     }
   }
 

@@ -23,8 +23,12 @@ add_executable(
     mshare-cli
     src/mshare-cli/main.cpp
     src/ArgParser.cpp
+    src/Logger.cpp
+    src/Crypto.cpp
 
     src/ArgParser.hpp
+    src/Logger.hpp
+    src/Crypto.hpp
 )
 
 target_include_directories(
@@ -51,5 +55,16 @@ target_link_directories(
 
 target_link_libraries(
     mshared
+    cryptopp
+)
+
+target_link_directories(
+    mshare-cli
+    PRIVATE
+        cryptopp/
+)
+
+target_link_libraries(
+    mshare-cli
     cryptopp
 )
