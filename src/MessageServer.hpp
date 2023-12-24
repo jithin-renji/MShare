@@ -1,25 +1,34 @@
 #ifndef MSMESSAGE_SERVER_HPP
 #define MSMESSAGE_SERVER_HPP
 
-#include <CryptoContext.hpp>
+#include <Crypto.hpp>
 
-#include <cstdint>
-#include <thread>
+#include <string>
+#include <stdexcept>
+#include <stdint.h>
 
 namespace MShare {
+
+class ServerStartupError : public std::exception {
+public:
+  ServerStartupError(std::string what_str);
+  const char* what() const noexcept override;
+
+private:
+  std::string what_str_;
+};
 
 class MessageServer {
 public:
   MessageServer(CryptoContext& cctx);
-
-  std::thread spawn();
+  ~MessageServer();
 
 private:
   uint16_t port_;
   int sfd_;
   CryptoContext& cctx_;
 
-  void run();
+  void main_loop();
 };
 
 } // namespace MShare

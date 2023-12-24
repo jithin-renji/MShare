@@ -1,6 +1,7 @@
 #include <ArgParser.hpp>
-#include <CryptoContext.hpp>
+#include <Crypto.hpp>
 #include <MessageServer.hpp>
+#include <Logger.hpp>
 
 #include <cryptopp/hex.h>
 #include <cryptopp/filters.h>
@@ -16,6 +17,10 @@ void version() {
 }
 
 int main(int argc, char *argv[]) {
+  using MShare::status;
+  using MShare::warn;
+  using MShare::error;
+
   MShare::OptionList options = {
     {"help", MShare::Option::FLAG, MShare::Option::NONE,
       "Show this help message and exit."},
@@ -41,24 +46,14 @@ int main(int argc, char *argv[]) {
   }
 
   MShare::CryptoContext cc;
-  std::string ciphertext = cc.encrypt("Hello, world!");
-  std::string ec;
+  status() << "PK hash: " << MShare::to_hex(cc.get_pubkey_hash()) << '\n';
 
-  CryptoPP::StringSource ss(
-    ciphertext,
-    ciphertext.size(),
-    new CryptoPP::HexEncoder(
-      new CryptoPP::StringSink(ec),
-      false
-    )
-  );
-
-  std::cout << "E: " << ec << '\n';
-  std::cout << "D: " << cc.decrypt(ciphertext) << '\n';
-
-  MShare::MessageServer server(cc);
-  std::thread server_thread = server.spawn();
-  server_thread.join();
+  try {
+    MShare::MessageServer server(cc);
+  } catch (MShare::ServerStartupError& e) {
+    MShare::error() << e.what() << '\n';
+    return -1;
+  }
 
   return 0;
 }

@@ -10,12 +10,12 @@ add_executable(
     src/mshared/main.cpp
     src/ArgParser.cpp
     src/Logger.cpp
-    src/CryptoContext.cpp
+    src/Crypto.cpp
     src/MessageServer.cpp
 
     src/ArgParser.hpp
     src/Logger.hpp
-    src/CryptoContext.hpp
+    src/Crypto.hpp
     src/MessageServer.hpp
 )
 

@@ -1,7 +1,10 @@
-#include <CryptoContext.hpp>
+#include "cryptopp/config_int.h"
+#include <Crypto.hpp>
 #include <Logger.hpp>
 
 #include <cryptopp/files.h>
+#include <cryptopp/hex.h>
+#include <cryptopp/filters.h>
 #include <cryptopp/eccrypto.h>
 #include <cryptopp/asn.h>
 #include <cryptopp/oids.h>
@@ -68,6 +71,22 @@ std::string CryptoContext::decrypt(std::string input) {
   );
 
   return plaintext;
+}
+
+std::string CryptoContext::get_pubkey_hash() {
+  const CryptoPP::ECPPoint& point = encryptor_.GetKey().GetPublicElement();
+
+  std::string hash;
+  CryptoPP::SHA3_256 hasher;
+
+  std::vector<CryptoPP::byte> x_bytes(point.x.ByteCount());
+  std::vector<CryptoPP::byte> y_bytes(point.y.ByteCount());
+  hasher.Update(x_bytes.data() , x_bytes.size());
+  hasher.Update(y_bytes.data(), y_bytes.size());
+  hash.resize(hasher.DigestSize());
+  hasher.Final((CryptoPP::byte*) &hash[0]);
+
+  return hash;
 }
 
 void CryptoContext::save_keys() {
@@ -149,6 +168,30 @@ std::ostream& operator<<(std::ostream& os, CryptoContext& cc) {
   print_pubkey(cc.encryptor_.GetKey(), os);
 
   return os;
+}
+
+std::string to_hex(const std::string& s) {
+  std::string hex_encoded;
+  CryptoPP::StringSource ss(
+    s,
+    s.size(),
+    new CryptoPP::HexEncoder(
+      new CryptoPP::StringSink(hex_encoded),
+      false
+    )
+  );
+
+  return hex_encoded;
+}
+
+std::string sha3_256(const std::string& input) {
+  std::string hash;
+  CryptoPP::SHA3_256 hasher;
+  hasher.Update((const unsigned char*) input.data(), input.length());
+  hash.resize(hasher.DigestSize());
+  hasher.Final((unsigned char*) &hash[0]);
+
+  return hash;
 }
 
 
