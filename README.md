@@ -21,7 +21,7 @@ $ unzip cryptoppVERSION.zip -d cryptopp
 $ cd cryptopp/
 ```
 
-Run `make` to build Crypto++. Optionally, add option `-jn` to ask `make` to use `n` CPU cores. For example, `-j8` would use 8 cores.
+Run `make` to build Crypto++. Optionally, add option `-jn` to speed up execution. For example, `-j8` would use 8 threads/cores.
 ```
 $ make      # -j8
 $ cd ..
