@@ -12,6 +12,18 @@ class ClientStartupError : public std::exception {
 public:
   ClientStartupError(std::string what_str);
 
+  const char* what() const noexcept override;
+
+private:
+  std::string what_str_;
+};
+
+class ClientSendError : public std::exception {
+public:
+  ClientSendError(std::string what_str);
+
+  const char* what() const noexcept override;
+
 private:
   std::string what_str_;
 };
