@@ -1,4 +1,5 @@
 #include <MessageServer.hpp>
+#include <Packet.hpp>
 #include <Logger.hpp>
 
 #include <unistd.h>
@@ -56,12 +57,14 @@ void MessageServer::main_loop() {
   std::vector<char> buf(BUFLEN);
   std::string sbuf;
   size_t nrecv = 0;
-  while ((nrecv = recvfrom(sfd_, &buf[0], BUFLEN, 0, (struct sockaddr*) &client, &caddr_sz)) > 0) {
+  while ((nrecv = recvfrom(sfd_, &buf[0], BUFLEN - 1, 0, (struct sockaddr*) &client, &caddr_sz)) > 0) {
     sbuf.append(buf.cbegin(), buf.cend());
-    status() << "New message from " << inet_ntoa(client.sin_addr) << ": " << sbuf << '\n';
-    for (char& c : buf) {
-      c = 0;
-    }
+    sbuf.resize(std::strlen(buf.data()));
+
+    MShare::Packet packet(sbuf);
+
+    status() << "New message from " << inet_ntoa(client.sin_addr) << ": " << packet.msg << '\n';
+    std::fill(buf.begin(), buf.end(), 0);
     sbuf.clear();
   }
 }

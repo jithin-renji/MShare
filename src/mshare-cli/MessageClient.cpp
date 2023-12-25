@@ -46,8 +46,17 @@ void MessageClient::send_msg(std::string& msg) {
     throw ClientSendError("Address parsing failed.");
   }
 
-  ssize_t nbytes_sent = sendto(sfd_, msg.c_str(), msg.length(), 0, (struct sockaddr *) &saddr, sizeof(saddr));
-  if (nbytes_sent == -1 || nbytes_sent != msg.length()) {
+  MShare::Packet packet;
+  packet.pubkey_hash = cc_.get_pubkey_hash();
+  packet.msg = msg;
+
+  std::string serialized = packet.serialize();
+  if (serialized.length() > 4095) {
+    throw ClientSendError("Message too long.");
+  }
+
+  ssize_t nbytes_sent = sendto(sfd_, serialized.c_str(), serialized.length(), 0, (struct sockaddr *) &saddr, sizeof(saddr));
+  if (nbytes_sent == -1 || nbytes_sent != serialized.length()) {
     throw ClientSendError("Full message send failed.");
   }
 }
