@@ -48,7 +48,7 @@ void MessageClient::send_msg(std::string& msg) {
 
   MShare::Packet packet;
   packet.pubkey_hash = cc_.get_pubkey_hash();
-  packet.msg = msg;
+  packet.msg = cc_.encrypt(msg);
 
   std::string serialized = packet.serialize();
   if (serialized.length() > 4095) {
