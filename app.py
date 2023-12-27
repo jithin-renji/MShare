@@ -19,4 +19,4 @@ def forward_to_mshared():
 
 with app.test_request_context():
     url_for("static", filename="main.js")
-
+    url_for("static", filename="style.css")

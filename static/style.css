@@ -1,0 +1,85 @@
+body {
+  font-family: 'Montserrat', sans-serif;
+  user-select: none;
+}
+
+#new-contact-form {
+  padding-left: 30px;
+}
+
+#new-contact-btn {
+  padding: 20px;
+}
+
+#new-contact-btn:hover {
+  background-color: rgb(23, 71, 23);
+}
+
+input {
+  font-family: inherit;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 10px;
+  border: 1px solid gray;
+}
+
+input:focus {
+  border: 1px solid blue;
+  outline: none;
+}
+
+.chat-list {
+  height: 100%;
+  width: 280px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.chat-list a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+}
+
+.chat-list h1 {
+  padding: 6px 8px 6px 16px;
+  color: white;
+}
+
+.chat-list a:hover {
+  color: #f1f1f1;
+  transition-duration: 0.2s;
+  background-color: rgb(84, 31, 31);
+}
+
+.chat-list a:active {
+  color: #f1f1f1;
+  background-color: rgb(78, 40, 40);
+}
+
+.main {
+  margin-left: 280px;
+  margin-right: 50px;
+  margin-bottom: 50px;
+  padding: 0px 10px;
+  height: 100%;
+}
+
+.message-input-container {
+  left: 33%;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding-bottom: 20px;
+}
+
+#message-input {
+  width: 50%;
+}
