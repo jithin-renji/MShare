@@ -16,3 +16,6 @@ Makefile
 # so no need to include with our sources.
 cryptopp/
 *.zip
+
+venv/
+__pycache__/
