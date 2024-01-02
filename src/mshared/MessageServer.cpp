@@ -62,12 +62,12 @@ void MessageServer::main_loop() {
     sbuf.resize(std::strlen(buf.data()));
 
     MShare::Packet packet(sbuf);
-    if (packet.pubkey_hash != cctx_.get_pubkey_hash()) {
-      // TODO: Forward.
-      continue;
-    }
+    // if (packet.pubkey_hash != cctx_.get_pubkey_hash()) {
+    //   // TODO: Forward.
+    //   continue;
+    // }
 
-    status() << "New message from " << inet_ntoa(client.sin_addr) << ": " << cctx_.decrypt(packet.msg) << '\n';
+    status() << "New message from " << inet_ntoa(client.sin_addr) << ": " << packet.msg << '\n';
     std::fill(buf.begin(), buf.end(), 0);
     sbuf.clear();
   }

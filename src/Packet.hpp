@@ -26,7 +26,8 @@ struct Packet {
   std::string serialize();
 
   std::string version;
-  std::string pubkey_hash;
+  std::string from_pubkey;
+  std::string to_pubkey;
   std::string msg;
 };
 

@@ -1,4 +1,3 @@
-#include "cryptopp/config_int.h"
 #include <Crypto.hpp>
 #include <Logger.hpp>
 
@@ -12,10 +11,56 @@
 #include <iostream>
 #include <filesystem>
 
+#ifdef __APPLE__
+  #include <stdexcept>
+  #include <sysdir.h>
+  #include <glob.h>
+#endif
+
 namespace MShare {
 
-CryptoContext::CryptoContext(): msdir_(".mshare") {
+#ifdef __APPLE__
+namespace {
+
+std::string expand_tilde(const char* str) {
+    if (!str)
+      return {};
+
+    glob_t globbuf;
+    if (glob(str, GLOB_TILDE, nullptr, &globbuf) == 0) {
+        std::string result(globbuf.gl_pathv[0]);
+        globfree(&globbuf);
+
+        return result;
+    } else {
+        throw std::runtime_error("Unable to expand tilde");
+    }
+}
+
+std::string expand_appdata_path() {
+    char path[PATH_MAX];
+    auto state = sysdir_start_search_path_enumeration(SYSDIR_DIRECTORY_APPLICATION_SUPPORT,
+                                                      SYSDIR_DOMAIN_MASK_USER);
+    if ((state = sysdir_get_next_search_path_enumeration(state, path))) {
+        return expand_tilde(path);
+    } else {
+        throw std::runtime_error("Failed to get Application Support directory");
+    }
+}
+
+
+} // namespace
+#endif // __APPLE__
+
+CryptoContext::CryptoContext() {
   namespace fs = std::filesystem;
+
+#ifdef __APPLE__
+  msdir_ = expand_appdata_path();
+  msdir_ = msdir_ / "MShare";
+#else
+  msdir_ = ".mshare"
+#endif
 
   if (!fs::exists(msdir_)) {
     fs::create_directory(msdir_);

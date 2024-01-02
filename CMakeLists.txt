@@ -21,22 +21,6 @@ add_executable(
     src/mshared/MessageServer.hpp
 )
 
-add_executable(
-    mshare-cli
-    src/mshare-cli/main.cpp
-    src/mshare-cli/MessageClient.cpp
-    src/ArgParser.cpp
-    src/Logger.cpp
-    src/Crypto.cpp
-    src/Packet.cpp
-
-    src/mshare-cli/MessageClient.hpp
-    src/ArgParser.hpp
-    src/Logger.hpp
-    src/Crypto.hpp
-    src/Packet.hpp
-)
-
 target_include_directories(
     mshared
     PRIVATE
@@ -45,14 +29,6 @@ target_include_directories(
         src/mshared/
 )
 
-target_include_directories(
-    mshare-cli
-    PRIVATE
-        ./
-        src/
-        src/mshare-cli/
-)
-
 target_link_directories(
     mshared
     PRIVATE
@@ -61,16 +37,5 @@ target_link_directories(
 
 target_link_libraries(
     mshared
-    cryptopp
-)
-
-target_link_directories(
-    mshare-cli
-    PRIVATE
-        cryptopp/
-)
-
-target_link_libraries(
-    mshare-cli
     cryptopp
 )
